@@ -3,4 +3,7 @@ pytesseract
 Pillow>=10.2.0
 pypdf>=3.9.0
 tqdm
-scikit-learn
+scikit-learn>=1.5.0
+numpy>=1.22.0
+
+

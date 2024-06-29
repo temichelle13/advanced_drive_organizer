@@ -1,6 +1,6 @@
 nltk
 pytesseract
 Pillow
-PyPDF2
+pypdf>=3.9.0
 tqdm
 scikit-learn

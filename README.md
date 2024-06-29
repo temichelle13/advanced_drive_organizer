@@ -21,17 +21,17 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
    ```bash
    pip install -r requirements.txt
 
-##Usage
+## Usage
 Run the script with the following command:
 
 ```bash
 python file_organizer.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory
 ```
 
-###Configuration
+### Configuration
 Categories can be modified in the categories.json file.
 Logs are stored in file_organizer.log.
 
-###Contact
+### Contact
 For any issues or suggestions, please contact [tea.larson-hetrick@waldenu.edu](mailto:tea.larson-hetrick@waldenu.edu).
 

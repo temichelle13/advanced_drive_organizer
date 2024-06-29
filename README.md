@@ -11,11 +11,11 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
 - Multithreading for efficient file processing
 
 ## Requirements
-- Python 3.x
+- Python 3.12
 - Required libraries (see `requirements.txt`)
 
 ## Installation
-1. Install Python 3.x from [python.org](https://www.python.org/).
+1. Install Python 3.12 from [python.org](https://www.python.org/).
 2. Clone this repository.
 3. Install required libraries:
    ```bash

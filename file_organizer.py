@@ -12,9 +12,9 @@ from PIL import Image
 import PyPDF2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from logging.handlers import RotatingFileHandler
 
 # Set up logging with RotatingFileHandler
-from logging.handlers import RotatingFileHandler
 log_handler = RotatingFileHandler('file_organizer.log', maxBytes=1000000, backupCount=5)
 logging.basicConfig(handlers=[log_handler], level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 

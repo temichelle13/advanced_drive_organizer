@@ -1,0 +1,7 @@
+{
+    "academic": ["research", "thesis", "paper", "study"],
+    "finance": ["invoice", "receipt", "bank", "statement"],
+    "developer": ["code", "script", "program", "software"],
+    "personal": ["photo", "music", "video", "diary"],
+    "business": ["contract", "agreement", "proposal", "report"]
+}

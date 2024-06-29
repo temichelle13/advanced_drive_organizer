@@ -1,0 +1,6 @@
+nltk
+pytesseract
+Pillow
+PyPDF2
+tqdm
+scikit-learn

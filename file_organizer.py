@@ -9,7 +9,7 @@ from tqdm import tqdm
 import concurrent.futures
 import pytesseract
 from PIL import Image
-import PyPDF2
+from PyPDF2 import PdfReader
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from logging.handlers import RotatingFileHandler
@@ -120,9 +120,9 @@ def extract_text(file_path):
         elif file_path.lower().endswith('.pdf'):
             text = ""
             with open(file_path, 'rb') as file:
-                reader = PyPDF2.PdfFileReader(file)
-                for page_num in range(reader.numPages):
-                    page = reader.getPage(page_num)
+                reader = PdfReader(file)
+                for page_num in range(len(reader.pages)):
+                    page = reader.pages[page_num]
                     text += page.extract_text()
         else:
             with open(file_path, 'r', errors='ignore') as file:

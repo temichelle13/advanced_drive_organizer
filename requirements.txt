@@ -1,5 +1,5 @@
 # Added specific versions for better compatibility
-nltk==3.8.1
+nltk==3.9
 pytesseract==0.3.10
 Pillow==10.2.0
 pypdf>=3.9.0

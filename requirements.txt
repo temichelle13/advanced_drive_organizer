@@ -1,8 +1,9 @@
-nltk
-pytesseract
-Pillow>=10.2.0
+# Added specific versions for better compatibility
+nltk==3.8.1
+pytesseract==0.3.10
+Pillow==10.2.0
 pypdf>=3.9.0
-tqdm
+tqdm==4.66.1
 scikit-learn>=1.5.0
 numpy>=1.22.0
 

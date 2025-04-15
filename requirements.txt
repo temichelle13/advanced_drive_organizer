@@ -1,7 +1,7 @@
 # Added specific versions for better compatibility
 nltk==3.9.1
 pytesseract==0.3.10
-Pillow==10.3.0
+Pillow==10.4.0
 pypdf>=3.9.0
 tqdm==4.66.3
 scikit-learn>=1.5.0

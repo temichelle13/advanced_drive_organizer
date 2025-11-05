@@ -10,8 +10,7 @@ import concurrent.futures
 import pytesseract
 from PIL import Image
 from PyPDF2 import PdfReader
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
+from joblib import load
 from logging.handlers import RotatingFileHandler
 from nltk.tokenize import word_tokenize
 
@@ -59,14 +58,17 @@ def compute_hash(file_path):
         logging.error(f'Error computing hash for file {file_path}: {e}')
     return hash_algo.hexdigest()
 
-# Train a placeholder text classifier (to be replaced with a real model)
-def train_text_classifier():
-    # This is a placeholder. In a real scenario, you'd load a pre-trained model.
-    vectorizer = TfidfVectorizer()
-    model = MultinomialNB()
-    return vectorizer, model
+# Load pre-trained text classifier
+def load_text_classifier():
+    try:
+        vectorizer = load('vectorizer.joblib')
+        model = load('model.joblib')
+        return vectorizer, model
+    except FileNotFoundError:
+        logging.error('Model files not found. Please run train_model.py before organizing files.')
+        raise
 
-vectorizer, model = train_text_classifier()
+vectorizer, model = load_text_classifier()
 
 # Categorize file based on content
 def categorize_file(file_name, file_content):

@@ -32,6 +32,12 @@ python file_organizer.py --source /path/to/source_directory --duplicates /path/t
 Categories can be modified in the categories.json file.
 Logs are stored in file_organizer.log.
 
+## Testing
+Run the test suite before committing changes:
+
+```bash
+pytest
+```
+
 ### Contact
 For any issues or suggestions, please contact [tea.larson-hetrick@waldenu.edu](mailto:tea.larson-hetrick@waldenu.edu).
-

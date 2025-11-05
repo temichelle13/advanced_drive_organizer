@@ -20,12 +20,19 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
 3. Install required libraries:
    ```bash
    pip install -r requirements.txt
+   ```
 
 ## Usage
-Run the script with the following command:
+Run the batch processor to handle existing files:
 
 ```bash
 python file_organizer.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory
+```
+
+To continuously monitor the source directory for new or modified files, start the watcher in parallel:
+
+```bash
+python watcher.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory
 ```
 
 ### Configuration

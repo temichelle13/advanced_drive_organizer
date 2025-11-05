@@ -20,6 +20,7 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
 3. Install required libraries:
    ```bash
    pip install -r requirements.txt
+   ```
 
 ## Usage
 Run the script with the following command:
@@ -31,6 +32,26 @@ python file_organizer.py --source /path/to/source_directory --duplicates /path/t
 ### Configuration
 Categories can be modified in the categories.json file.
 Logs are stored in file_organizer.log.
+
+### Managing Categories
+Use `manage_categories.py` to view or edit the available categories:
+
+```bash
+python manage_categories.py list
+```
+
+Add a new category or keywords:
+
+```bash
+python manage_categories.py add finance invoice receipt
+```
+
+Remove a keyword or an entire category:
+
+```bash
+python manage_categories.py remove finance receipt
+```
+
 
 ### Contact
 For any issues or suggestions, please contact [tea.larson-hetrick@waldenu.edu](mailto:tea.larson-hetrick@waldenu.edu).

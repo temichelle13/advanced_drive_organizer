@@ -177,10 +177,10 @@ def process_file(file_path, duplicates_dir):
     except Exception as e:
         logging.error(f'Error processing file {file_path}: {e}')
 
-def process_directory(directory, duplicates_dir):
+def process_directory(directory, duplicates_dir, workers=4):
     total_files = sum([len(files) for r, d, files in os.walk(directory)])
     with tqdm(total=total_files, desc="Processing files") as pbar:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
             futures = []
             for root, _, files in os.walk(directory):
                 for file_name in files:
@@ -197,13 +197,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='File Organizer Script')
     parser.add_argument('--source', required=True, help='Path to the source directory')
     parser.add_argument('--duplicates', required=True, help='Path to the duplicates directory')
+    parser.add_argument('--workers', type=int, default=4, help='Number of worker threads for processing files')
     args = parser.parse_args()
 
     source_directory = args.source
     duplicates_directory = args.duplicates
+    workers = args.workers
 
     if not os.path.exists(review_later_folder):
         os.makedirs(review_later_folder)
 
-    process_directory(source_directory, duplicates_directory)
+    process_directory(source_directory, duplicates_directory, workers)
     logging.info('File organization completed')

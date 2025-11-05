@@ -10,6 +10,12 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
 - Progress updates
 - Multithreading for efficient file processing
 
+## Supported File Types
+- Images (`.png`, `.jpg`, `.jpeg`)
+- PDF documents (`.pdf`)
+- Word documents (`.docx`)
+- Plain text files and other text-based formats
+
 ## Requirements
 - Python 3.12
 - Required libraries (see `requirements.txt`)
@@ -20,6 +26,7 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
 3. Install required libraries:
    ```bash
    pip install -r requirements.txt
+   ```
 
 ## Usage
 Run the script with the following command:

@@ -10,6 +10,7 @@ import concurrent.futures
 import pytesseract
 from PIL import Image
 from PyPDF2 import PdfReader
+from docx import Document
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from logging.handlers import RotatingFileHandler
@@ -124,6 +125,11 @@ def extract_text(file_path):
                 for page_num in range(len(reader.pages)):
                     page = reader.pages[page_num]
                     text += page.extract_text()
+        elif file_path.lower().endswith('.docx'):
+            text = ""
+            document = Document(file_path)
+            for paragraph in document.paragraphs:
+                text += paragraph.text + "\n"
         else:
             with open(file_path, 'r', errors='ignore') as file:
                 text = file.read()

@@ -28,6 +28,14 @@ Run the script with the following command:
 python file_organizer.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory
 ```
 
+### Headless Operation
+For automated or server-side workflows without a display, enable headless mode:
+
+```bash
+python file_organizer.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory --headless
+```
+In headless mode, files that would normally trigger a prompt are moved to the `review_later` folder and all actions are logged.
+
 ### Configuration
 Categories can be modified in the categories.json file.
 Logs are stored in file_organizer.log.

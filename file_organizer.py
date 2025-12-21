@@ -135,7 +135,21 @@ def extract_text(file_path):
         return ""
 
 # Prompt user for action (batched)
-def prompt_user_for_action_batch(files):
+def prompt_user_for_action_batch(files, headless=False):
+    """Prompt the user for actions on a batch of files.
+
+    When headless is True, files are automatically moved to the
+    ``review_later`` folder without invoking any GUI dialogs. This allows
+    the script to run in automated or server-side environments where a
+    display may not be available.
+    """
+
+    if headless:
+        for file_path in files.keys():
+            logging.info(f"Headless mode active; moving {file_path} to {review_later_folder}")
+            move_file(file_path, review_later_folder)
+        return
+
     root = tk.Tk()
     root.withdraw()  # Hide the main window
 
@@ -159,7 +173,7 @@ def update_progress(tqdm_instance, total):
     tqdm_instance.update(1)
 
 # Process directory with multithreading
-def process_file(file_path, duplicates_dir):
+def process_file(file_path, duplicates_dir, headless=False):
     try:
         if os.path.isfile(file_path):
             with open(file_path, 'r', errors='ignore') as file:
@@ -171,7 +185,7 @@ def process_file(file_path, duplicates_dir):
                 move_file(file_path, dest_dir)
             else:
                 extracted_text = extract_text(file_path)
-                prompt_user_for_action_batch({file_path: extracted_text})
+                prompt_user_for_action_batch({file_path: extracted_text}, headless)
 
             handle_duplicates(file_path, duplicates_dir)
     except PermissionError:
@@ -179,7 +193,7 @@ def process_file(file_path, duplicates_dir):
     except Exception as e:
         logging.error(f'Error processing file {file_path}: {e}')
 
-def process_directory(directory, duplicates_dir):
+def process_directory(directory, duplicates_dir, headless=False):
     total_files = sum([len(files) for r, d, files in os.walk(directory)])
     with tqdm(total=total_files, desc="Processing files") as pbar:
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
@@ -187,7 +201,7 @@ def process_directory(directory, duplicates_dir):
             for root, _, files in os.walk(directory):
                 for file_name in files:
                     file_path = os.path.join(root, file_name)
-                    futures.append(executor.submit(process_file, file_path, duplicates_dir))
+                    futures.append(executor.submit(process_file, file_path, duplicates_dir, headless))
 
             for future in concurrent.futures.as_completed(futures):
                 update_progress(pbar, total_files)
@@ -199,13 +213,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='File Organizer Script')
     parser.add_argument('--source', required=True, help='Path to the source directory')
     parser.add_argument('--duplicates', required=True, help='Path to the duplicates directory')
+    parser.add_argument('--headless', action='store_true', help='Run without GUI prompts')
     args = parser.parse_args()
 
     source_directory = args.source
     duplicates_directory = args.duplicates
+    headless = args.headless
+
+    if headless:
+        logging.info('Headless mode enabled; files requiring review will be moved to review_later')
 
     if not os.path.exists(review_later_folder):
         os.makedirs(review_later_folder)
 
-    process_directory(source_directory, duplicates_directory)
+    process_directory(source_directory, duplicates_directory, headless)
     logging.info('File organization completed')

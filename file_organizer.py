@@ -87,8 +87,11 @@ def categorize_file(file_name, file_content):
     return None
 
 # Move file with error handling
-def move_file(src_path, dest_dir):
+def move_file(src_path, dest_dir, dry_run=False):
     try:
+        if dry_run:
+            logging.info(f"Dry run: Would move file {src_path} to {dest_dir}")
+            return
         if not os.path.exists(dest_dir):
             os.makedirs(dest_dir)
         shutil.move(src_path, dest_dir)
@@ -99,18 +102,21 @@ def move_file(src_path, dest_dir):
         logging.error(f'Error moving file {src_path}: {e}')
 
 # Handle duplicates
-def handle_duplicates(file_path, duplicates_dir):
+def handle_duplicates(file_path, duplicates_dir, dry_run=False):
     file_hash = compute_hash(file_path)
     duplicate_path = os.path.join(duplicates_dir, file_hash)
     try:
         if os.path.exists(duplicate_path):
             dest_dir = os.path.join(duplicates_dir, file_hash[:2], file_hash[2:4], file_hash)
-            move_file(file_path, dest_dir)
+            move_file(file_path, dest_dir, dry_run=dry_run)
             logging.info(f'Found duplicate: {file_path}')
         else:
-            os.makedirs(duplicate_path)
-            shutil.move(file_path, duplicate_path)
-            logging.info(f'Hash directory created for {file_path}')
+            if dry_run:
+                logging.info(f'Dry run: Would create directory {duplicate_path}')
+                logging.info(f'Dry run: Would move file {file_path} to {duplicate_path}')
+            else:
+                move_file(file_path, duplicate_path, dry_run=dry_run)
+                logging.info(f'Hash directory created for {file_path}')
     except Exception as e:
         logging.error(f'Error handling duplicates for file {file_path}: {e}')
 
@@ -135,7 +141,7 @@ def extract_text(file_path):
         return ""
 
 # Prompt user for action (batched)
-def prompt_user_for_action_batch(files):
+def prompt_user_for_action_batch(files, dry_run=False):
     root = tk.Tk()
     root.withdraw()  # Hide the main window
 
@@ -145,12 +151,12 @@ def prompt_user_for_action_batch(files):
 
         if user_input:
             if user_input.lower() == "review later":
-                move_file(file_path, review_later_folder)
+                move_file(file_path, review_later_folder, dry_run=dry_run)
             else:
                 categories[user_input.lower()] = categories.get(user_input.lower(), [])
-                move_file(file_path, os.path.join('categorized_files', user_input.lower()))
+                move_file(file_path, os.path.join('categorized_files', user_input.lower()), dry_run=dry_run)
         else:
-            move_file(file_path, review_later_folder)
+            move_file(file_path, review_later_folder, dry_run=dry_run)
 
     root.destroy()
 
@@ -159,7 +165,7 @@ def update_progress(tqdm_instance, total):
     tqdm_instance.update(1)
 
 # Process directory with multithreading
-def process_file(file_path, duplicates_dir):
+def process_file(file_path, duplicates_dir, dry_run=False):
     try:
         if os.path.isfile(file_path):
             with open(file_path, 'r', errors='ignore') as file:
@@ -168,18 +174,18 @@ def process_file(file_path, duplicates_dir):
 
             if category:
                 dest_dir = os.path.join('categorized_files', category)
-                move_file(file_path, dest_dir)
+                move_file(file_path, dest_dir, dry_run=dry_run)
             else:
                 extracted_text = extract_text(file_path)
-                prompt_user_for_action_batch({file_path: extracted_text})
+                prompt_user_for_action_batch({file_path: extracted_text}, dry_run=dry_run)
 
-            handle_duplicates(file_path, duplicates_dir)
+            handle_duplicates(file_path, duplicates_dir, dry_run=dry_run)
     except PermissionError:
         logging.error(f'Permission denied for file {file_path}. Skipping.')
     except Exception as e:
         logging.error(f'Error processing file {file_path}: {e}')
 
-def process_directory(directory, duplicates_dir):
+def process_directory(directory, duplicates_dir, dry_run=False):
     total_files = sum([len(files) for r, d, files in os.walk(directory)])
     with tqdm(total=total_files, desc="Processing files") as pbar:
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
@@ -187,7 +193,7 @@ def process_directory(directory, duplicates_dir):
             for root, _, files in os.walk(directory):
                 for file_name in files:
                     file_path = os.path.join(root, file_name)
-                    futures.append(executor.submit(process_file, file_path, duplicates_dir))
+                    futures.append(executor.submit(process_file, file_path, duplicates_dir, dry_run))
 
             for future in concurrent.futures.as_completed(futures):
                 update_progress(pbar, total_files)
@@ -199,13 +205,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='File Organizer Script')
     parser.add_argument('--source', required=True, help='Path to the source directory')
     parser.add_argument('--duplicates', required=True, help='Path to the duplicates directory')
+    parser.add_argument('--dry-run', action='store_true', help='Log planned actions without moving files')
     args = parser.parse_args()
 
     source_directory = args.source
     duplicates_directory = args.duplicates
+    dry_run = args.dry_run
 
     if not os.path.exists(review_later_folder):
         os.makedirs(review_later_folder)
 
-    process_directory(source_directory, duplicates_directory)
+    process_directory(source_directory, duplicates_directory, dry_run)
     logging.info('File organization completed')

@@ -20,17 +20,21 @@ A program that utilizes OCR, NLP, and compares hashes of files and folders to lo
 3. Install required libraries:
    ```bash
    pip install -r requirements.txt
+   ```
 
 ## Usage
 Run the script with the following command:
 
 ```bash
-python file_organizer.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory
+python file_organizer.py --source /path/to/source_directory --duplicates /path/to/duplicates_directory [--workers 4]
 ```
 
 ### Configuration
 Categories can be modified in the categories.json file.
 Logs are stored in file_organizer.log.
+
+### Performance
+The `--workers` option controls how many files are processed in parallel. Increasing the number can speed up processing on multi-core systems but uses more CPU resources. Decreasing it reduces resource usage at the cost of slower performance.
 
 ### Contact
 For any issues or suggestions, please contact [tea.larson-hetrick@waldenu.edu](mailto:tea.larson-hetrick@waldenu.edu).
